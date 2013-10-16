@@ -1,0 +1,1 @@
+Sample maven project for running performance or acceptance testing from the same test class
