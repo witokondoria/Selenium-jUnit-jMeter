@@ -3,51 +3,293 @@
   <hashTree>
     <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Plan de Pruebas" enabled="true">
       <stringProp name="TestPlan.comments"></stringProp>
-      <boolProp name="TestPlan.functional_mode">true</boolProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
       <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
       <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="Variables definidas por el Usuario" enabled="true">
-        <collectionProp name="Arguments.arguments"/>
+        <collectionProp name="Arguments.arguments">
+          <elementProp name="threads" elementType="Argument">
+            <stringProp name="Argument.name">threads</stringProp>
+            <stringProp name="Argument.value">6</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+        </collectionProp>
       </elementProp>
       <stringProp name="TestPlan.user_define_classpath"></stringProp>
     </TestPlan>
     <hashTree>
-      <kg.apc.jmeter.threads.SteppingThreadGroup guiclass="kg.apc.jmeter.threads.SteppingThreadGroupGui" testclass="kg.apc.jmeter.threads.SteppingThreadGroup" testname="jp@gc - Stepping Thread Group" enabled="true">
+      <kg.apc.jmeter.threads.SteppingThreadGroup guiclass="kg.apc.jmeter.threads.SteppingThreadGroupGui" testclass="kg.apc.jmeter.threads.SteppingThreadGroup" testname="jUnit test thread" enabled="true">
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
-        <stringProp name="ThreadGroup.num_threads">50</stringProp>
-        <stringProp name="Threads initial delay">5</stringProp>
-        <stringProp name="Start users count">10</stringProp>
-        <stringProp name="Start users count burst">10</stringProp>
+        <stringProp name="ThreadGroup.num_threads">${threads}</stringProp>
+        <stringProp name="Threads initial delay">2</stringProp>
+        <stringProp name="Start users count">2</stringProp>
+        <stringProp name="Start users count burst">2</stringProp>
         <stringProp name="Start users period">5</stringProp>
-        <stringProp name="Stop users count">10</stringProp>
-        <stringProp name="Stop users period">1</stringProp>
-        <stringProp name="flighttime">20</stringProp>
-        <stringProp name="rampUp">2</stringProp>
+        <stringProp name="Stop users count">2</stringProp>
+        <stringProp name="Stop users period">5</stringProp>
+        <stringProp name="flighttime">60</stringProp>
+        <stringProp name="rampUp">1</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Controlador Bucle" enabled="true">
           <boolProp name="LoopController.continue_forever">false</boolProp>
           <intProp name="LoopController.loops">-1</intProp>
         </elementProp>
       </kg.apc.jmeter.threads.SteppingThreadGroup>
       <hashTree>
-        <JUnitSampler guiclass="JUnitTestSamplerGui" testclass="JUnitSampler" testname="Petición JUnit" enabled="true">
+        <JUnitSampler guiclass="JUnitTestSamplerGui" testclass="JUnitSampler" testname="test.LoginTestIT#testLogin" enabled="true">
           <stringProp name="junitSampler.classname">test.LoginTestIT</stringProp>
           <stringProp name="junitsampler.constructorstring"></stringProp>
           <stringProp name="junitsampler.method">testLogin</stringProp>
           <stringProp name="junitsampler.pkg.filter"></stringProp>
-          <stringProp name="junitsampler.success">Test satisfactorio</stringProp>
-          <stringProp name="junitsampler.success.code">1000</stringProp>
-          <stringProp name="junitsampler.failure">Test falló</stringProp>
-          <stringProp name="junitsampler.failure.code">0001</stringProp>
-          <stringProp name="junitsampler.error">Ocurrió un error no esperado</stringProp>
-          <stringProp name="junitsampler.error.code">9999</stringProp>
+          <stringProp name="junitsampler.success">OK</stringProp>
+          <stringProp name="junitsampler.success.code">200</stringProp>
+          <stringProp name="junitsampler.failure">KO</stringProp>
+          <stringProp name="junitsampler.failure.code">300</stringProp>
+          <stringProp name="junitsampler.error">ERR</stringProp>
+          <stringProp name="junitsampler.error.code">400</stringProp>
           <stringProp name="junitsampler.exec.setup">false</stringProp>
-          <stringProp name="junitsampler.append.error">true</stringProp>
-          <stringProp name="junitsampler.append.exception">true</stringProp>
+          <stringProp name="junitsampler.append.error">false</stringProp>
+          <stringProp name="junitsampler.append.exception">false</stringProp>
           <boolProp name="junitsampler.createinstancepersample">true</boolProp>
           <boolProp name="junitsampler.junit4">true</boolProp>
         </JUnitSampler>
+        <hashTree>
+          <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Constant Timer" enabled="true">
+            <stringProp name="ConstantTimer.delay">3000</stringProp>
+          </ConstantTimer>
+          <hashTree/>
+          <BeanShellPostProcessor guiclass="TestBeanGUI" testclass="BeanShellPostProcessor" testname="Test result filewriter" enabled="true">
+            <stringProp name="filename"></stringProp>
+            <stringProp name="parameters"></stringProp>
+            <boolProp name="resetInterpreter">false</boolProp>
+            <stringProp name="script">import org.apache.jmeter.services.FileServer;
+
+timestamp = prev.getTimeStamp();
+metric = prev.getTime(); //Time spent in test case execution
+
+f = new FileOutputStream(FileServer.getFileServer().getBaseDir()+&quot;\\..\\..\\..\\target\\jmeter\\results\\combined.csv&quot;, true);
+p = new PrintStream(f); 
+p.println(&quot;test.LoginTestIT#testLogin, &quot; + timestamp + &quot;, &quot; + metric);
+p.close();
+f.close();</stringProp>
+          </BeanShellPostProcessor>
+          <hashTree/>
+        </hashTree>
+      </hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="JMX monitor thread" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <intProp name="LoopController.loops">-1</intProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">1</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">1</stringProp>
+        <longProp name="ThreadGroup.start_time">1381993348000</longProp>
+        <longProp name="ThreadGroup.end_time">1381993348000</longProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.duration"></stringProp>
+        <stringProp name="ThreadGroup.delay"></stringProp>
+        <boolProp name="ThreadGroup.delayedStart">true</boolProp>
+      </ThreadGroup>
+      <hashTree>
+        <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Waiting for jUnit test thread" enabled="true">
+          <boolProp name="LoopController.continue_forever">true</boolProp>
+          <stringProp name="LoopController.loops">2</stringProp>
+        </LoopController>
+        <hashTree>
+          <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="Heap used query" enabled="true">
+            <stringProp name="cacheKey">JMX</stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="script">import javax.management.ObjectName
+import javax.management.remote.*
+import javax.management.remote.JMXConnectorFactory as JmxFactory
+import javax.management.remote.JMXServiceURL as JmxUrl
+
+def serverUrl = &apos;service:jmx:rmi:///jndi/rmi://pr-delgado-j:11099/jmxrmi&apos;
+def username = &quot;monitor&quot;;
+def password = &quot;monitor&quot;;
+
+def env = [
+    (JMXConnector.CREDENTIALS): (String[])[username, password]
+  ]
+
+def server = JmxFactory.connect(new JmxUrl(serverUrl),env).MBeanServerConnection
+def jvmInfo = new GroovyMBean(server, &apos;java.lang:type=Memory&apos;)
+
+ SampleResult.setResponseData(jvmInfo.HeapMemoryUsage.used.toString())
+ SampleResult.setLatency(jvmInfo.HeapMemoryUsage.used)
+ //vars.put {&quot;Used heap&quot;, jvmInfo.HeapMemoryUsage.used}
+ //return jvmInfo.HeapMemoryUsage.used
+</stringProp>
+            <stringProp name="scriptLanguage">Groovy</stringProp>
+          </JSR223Sampler>
+          <hashTree>
+            <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Constant Timer" enabled="true">
+              <stringProp name="ConstantTimer.delay">5000</stringProp>
+            </ConstantTimer>
+            <hashTree/>
+          </hashTree>
+        </hashTree>
+        <WhileController guiclass="WhileControllerGui" testclass="WhileController" testname="While Controller" enabled="true">
+          <stringProp name="WhileController.condition">${__BeanShell(org.apache.jmeter.threads.JMeterContextService.getNumberOfThreads()&gt;1)} </stringProp>
+        </WhileController>
+        <hashTree>
+          <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="Heap used  query" enabled="true">
+            <stringProp name="cacheKey">JMX</stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="script">import javax.management.ObjectName
+import javax.management.remote.*
+import javax.management.remote.JMXConnectorFactory as JmxFactory
+import javax.management.remote.JMXServiceURL as JmxUrl
+
+def serverUrl = &apos;service:jmx:rmi:///jndi/rmi://pr-delgado-j:11099/jmxrmi&apos;
+def username = &quot;monitor&quot;;
+def password = &quot;monitor&quot;;
+
+def env = [
+    (JMXConnector.CREDENTIALS): (String[])[username, password]
+  ]
+
+def server = JmxFactory.connect(new JmxUrl(serverUrl),env).MBeanServerConnection
+def jvmInfo = new GroovyMBean(server, &apos;java.lang:type=Memory&apos;)
+
+ SampleResult.setResponseData(jvmInfo.HeapMemoryUsage.used.toString())
+ SampleResult.setLatency(jvmInfo.HeapMemoryUsage.used)
+ //vars.put {&quot;Used heap&quot;, jvmInfo.HeapMemoryUsage.used}
+ //return jvmInfo.HeapMemoryUsage.used
+</stringProp>
+            <stringProp name="scriptLanguage">Groovy</stringProp>
+          </JSR223Sampler>
+          <hashTree>
+            <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Constant Timer" enabled="true">
+              <stringProp name="ConstantTimer.delay">5000</stringProp>
+            </ConstantTimer>
+            <hashTree/>
+          </hashTree>
+        </hashTree>
+        <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="Heap used query" enabled="true">
+          <stringProp name="cacheKey">JMX</stringProp>
+          <stringProp name="filename"></stringProp>
+          <stringProp name="parameters"></stringProp>
+          <stringProp name="script">import javax.management.ObjectName
+import javax.management.remote.*
+import javax.management.remote.JMXConnectorFactory as JmxFactory
+import javax.management.remote.JMXServiceURL as JmxUrl
+
+def serverUrl = &apos;service:jmx:rmi:///jndi/rmi://pr-delgado-j:11099/jmxrmi&apos;
+def username = &quot;monitor&quot;;
+def password = &quot;monitor&quot;;
+
+def env = [
+    (JMXConnector.CREDENTIALS): (String[])[username, password]
+  ]
+
+def server = JmxFactory.connect(new JmxUrl(serverUrl),env).MBeanServerConnection
+def jvmInfo = new GroovyMBean(server, &apos;java.lang:type=Memory&apos;)
+
+ SampleResult.setResponseData(jvmInfo.HeapMemoryUsage.used.toString())
+ SampleResult.setLatency(jvmInfo.HeapMemoryUsage.used)
+ //vars.put {&quot;Used heap&quot;, jvmInfo.HeapMemoryUsage.used}
+ //return jvmInfo.HeapMemoryUsage.used
+</stringProp>
+          <stringProp name="scriptLanguage">Groovy</stringProp>
+        </JSR223Sampler>
+        <hashTree>
+          <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Constant Timer" enabled="true">
+            <stringProp name="ConstantTimer.delay">5000</stringProp>
+          </ConstantTimer>
+          <hashTree/>
+        </hashTree>
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Stop" enabled="true">
+          <intProp name="ActionProcessor.action">0</intProp>
+          <intProp name="ActionProcessor.target">0</intProp>
+          <stringProp name="ActionProcessor.duration"></stringProp>
+        </TestAction>
+        <hashTree/>
+        <BeanShellPostProcessor guiclass="TestBeanGUI" testclass="BeanShellPostProcessor" testname="Monitor result filewriter" enabled="true">
+          <stringProp name="filename"></stringProp>
+          <stringProp name="parameters"></stringProp>
+          <boolProp name="resetInterpreter">false</boolProp>
+          <stringProp name="script">import org.apache.jmeter.services.FileServer;
+
+timestamp = prev.getTimeStamp();
+metric = prev.getLatency(); //Heap used value 
+
+f = new FileOutputStream(FileServer.getFileServer().getBaseDir()+&quot;\\..\\..\\..\\target\\jmeter\\results\\combined.csv&quot;, true);
+p = new PrintStream(f); 
+p.println(&quot;Heap used, &quot; + timestamp + &quot;, &quot; + metric);
+p.close();
+f.close();</stringProp>
+        </BeanShellPostProcessor>
         <hashTree/>
       </hashTree>
-      <Summariser guiclass="SummariserGui" testclass="Summariser" testname="Generar Resumen de Resultados" enabled="true"/>
+      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
+        <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <objProp>
+          <name>saveConfig</name>
+          <value class="SampleSaveConfiguration">
+            <time>true</time>
+            <latency>true</latency>
+            <timestamp>true</timestamp>
+            <success>true</success>
+            <label>true</label>
+            <code>true</code>
+            <message>true</message>
+            <threadName>true</threadName>
+            <dataType>true</dataType>
+            <encoding>false</encoding>
+            <assertions>true</assertions>
+            <subresults>true</subresults>
+            <responseData>false</responseData>
+            <samplerData>false</samplerData>
+            <xml>false</xml>
+            <fieldNames>false</fieldNames>
+            <responseHeaders>false</responseHeaders>
+            <requestHeaders>false</requestHeaders>
+            <responseDataOnError>false</responseDataOnError>
+            <saveAssertionResultsFailureMessage>false</saveAssertionResultsFailureMessage>
+            <assertionsResultsToSave>0</assertionsResultsToSave>
+            <bytes>true</bytes>
+          </value>
+        </objProp>
+        <stringProp name="filename"></stringProp>
+      </ResultCollector>
+      <hashTree/>
+      <kg.apc.jmeter.vizualizers.CorrectedResultCollector guiclass="kg.apc.jmeter.vizualizers.ThreadsStateOverTimeGui" testclass="kg.apc.jmeter.vizualizers.CorrectedResultCollector" testname="jp@gc - Active Threads Over Time" enabled="true">
+        <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <objProp>
+          <name>saveConfig</name>
+          <value class="SampleSaveConfiguration">
+            <time>true</time>
+            <latency>true</latency>
+            <timestamp>true</timestamp>
+            <success>true</success>
+            <label>true</label>
+            <code>true</code>
+            <message>true</message>
+            <threadName>true</threadName>
+            <dataType>true</dataType>
+            <encoding>false</encoding>
+            <assertions>true</assertions>
+            <subresults>true</subresults>
+            <responseData>false</responseData>
+            <samplerData>false</samplerData>
+            <xml>false</xml>
+            <fieldNames>false</fieldNames>
+            <responseHeaders>false</responseHeaders>
+            <requestHeaders>false</requestHeaders>
+            <responseDataOnError>false</responseDataOnError>
+            <saveAssertionResultsFailureMessage>false</saveAssertionResultsFailureMessage>
+            <assertionsResultsToSave>0</assertionsResultsToSave>
+            <bytes>true</bytes>
+          </value>
+        </objProp>
+        <stringProp name="filename"></stringProp>
+        <longProp name="interval_grouping">500</longProp>
+        <boolProp name="graph_aggregated">false</boolProp>
+        <stringProp name="include_sample_labels"></stringProp>
+        <stringProp name="exclude_sample_labels"></stringProp>
+      </kg.apc.jmeter.vizualizers.CorrectedResultCollector>
       <hashTree/>
     </hashTree>
   </hashTree>
