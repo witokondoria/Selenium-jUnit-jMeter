@@ -57,7 +57,12 @@
 					<dependency>
 						<groupId>kg.apc</groupId>
 						<artifactId>JMeterPlugins-Standard</artifactId>
-						<version>1.1.1</version>
+						<version>1.1.2</version>
+					</dependency>
+					<dependency>
+						<groupId>kg.apc</groupId>
+						<artifactId>JMeterPlugins-Extras</artifactId>
+						<version>1.1.2</version>
 					</dependency>
 					<dependency>
 						<groupId>org.seleniumhq.selenium</groupId>
@@ -82,7 +87,7 @@
 				<version>1.0.5-SNAPSHOT</version>
 				<configuration>
 					<source>${project.build.directory}/jmeter/results/*.jtl</source>
-					<targetDirectory>${project.build.directory}/results</targetDirectory>
+					<targetDirectory>${project.build.directory}/jmeter/results</targetDirectory>
 					<!-- <generateCSVs>true</generateCSVs> -->
 					<generateCharts>true</generateCharts>
 					<writers>

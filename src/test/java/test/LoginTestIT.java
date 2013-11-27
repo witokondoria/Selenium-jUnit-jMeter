@@ -14,7 +14,7 @@ public class LoginTestIT extends Common {
 
 	@Test
 	public void testLogin() throws Exception {
-		Log.info("Starting test with" + super.browser);
+		Log.info("Starting test with " + super.browser);
 		this.login();
 		screenCap();
 		Thread.sleep(2000);
